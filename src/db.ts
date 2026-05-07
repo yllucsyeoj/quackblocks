@@ -21,34 +21,32 @@ export class DuckDBManager {
   private queryCache = new Map<string, QueryResult>();
   private debug = false;
 
-  async init(pluginDir: string, debug = false): Promise<void> {
+  async init(debug = false): Promise<void> {
     if (this.conn) return;
     this.debug = debug;
     if (!this.initPromise) {
-      this.initPromise = this._init(pluginDir, debug);
+      this.initPromise = this._init(debug);
     }
     await this.initPromise;
   }
 
-  private async _init(pluginDir: string, debug = false): Promise<void> {
+  private async _init(debug = false): Promise<void> {
     if (debug) console.log("[quackblocks] Initializing DuckDB WASM...");
 
     try {
-      const fs = require("fs");
-      const path = require("path");
+      // ============================================================
+      // Load DuckDB bundles from jsDelivr CDN (BRAT-compatible)
+      // ============================================================
+      const bundles = duckdb.getJsDelivrBundles();
+      const bundle = await duckdb.selectBundle(bundles);
 
-      const wasmFilePath = path.join(pluginDir, "duckdb-eh.wasm");
-      const workerFilePath = path.join(pluginDir, "duckdb-browser-eh.worker.js");
+      if (!bundle.mainWorker || !bundle.mainModule) {
+        throw new Error("DuckDB bundle selection failed: missing worker or module URL");
+      }
 
       // ============================================================
       // CRITICAL: Electron Workaround #1 — Buffer Shim
       // ============================================================
-      // The DuckDB browser worker bundle stubs out Node's buffer module
-      // as an empty function: Hc=pr(()=>{})
-      // But a bundled SHA-256 lib still does: var L = Hc().Buffer
-      // which returns undefined. We inject a full Buffer class shim.
-      const workerScript = fs.readFileSync(workerFilePath, "utf-8");
-
       const fullBufferShim = `
 // Full Buffer shim for DuckDB worker in Electron Blob context
 (function() {
@@ -101,26 +99,22 @@ export class DuckDBManager {
 `;
 
       // ============================================================
-      // CRITICAL: Electron Workaround #2 — Regex patch Buffer fallback
+      // CRITICAL: Electron Workaround #2 — Fetch & patch worker
       // ============================================================
-      // The internal module resolver returns {} for the buffer module.
-      // Code does Hc().Buffer which is undefined.
-      // We patch every ).Buffer, to ).Buffer || globalThis.Buffer,
-      // so the code falls back to our global shim.
-      let patchedScript = workerScript;
-      patchedScript = patchedScript.replace(
+      const workerResponse = await fetch(bundle.mainWorker);
+      if (!workerResponse.ok) {
+        throw new Error(`Failed to fetch DuckDB worker: ${workerResponse.status}`);
+      }
+      let workerScript = await workerResponse.text();
+
+      // Patch every ).Buffer, to ).Buffer || globalThis.Buffer,
+      workerScript = workerScript.replace(
         /\)\.Buffer,/g,
         ').Buffer || globalThis.Buffer,'
       );
 
-      // ============================================================
-      // CRITICAL: Electron Workaround #3 — Blob URL for Worker
-      // ============================================================
-      // Electron's app://obsidian.md origin cannot load Workers from
-      // file:// URLs (cross-origin restriction). We read the worker
-      // script from disk and create a blob: URL instead.
       const workerBlob = new Blob(
-        [fullBufferShim + patchedScript],
+        [fullBufferShim + workerScript],
         { type: "application/javascript" }
       );
       const workerUrl = URL.createObjectURL(workerBlob);
@@ -131,11 +125,13 @@ export class DuckDBManager {
       this.db = new duckdb.AsyncDuckDB(logger, worker);
 
       // ============================================================
-      // CRITICAL: Electron Workaround #4 — Blob URL for WASM
+      // CRITICAL: Electron Workaround #3 — Blob URL for WASM
       // ============================================================
-      // The worker tries to fetch() the WASM binary. It expects a URL,
-      // not an ArrayBuffer. We create a blob: URL from the file contents.
-      const wasmBuffer = fs.readFileSync(wasmFilePath);
+      const wasmResponse = await fetch(bundle.mainModule);
+      if (!wasmResponse.ok) {
+        throw new Error(`Failed to fetch DuckDB WASM: ${wasmResponse.status}`);
+      }
+      const wasmBuffer = await wasmResponse.arrayBuffer();
       const wasmBlob = new Blob([wasmBuffer], { type: "application/wasm" });
       const wasmUrl = URL.createObjectURL(wasmBlob);
       this.blobUrls.push(wasmUrl);

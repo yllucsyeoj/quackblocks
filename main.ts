@@ -10,12 +10,6 @@ export default class QuackBlocksPlugin extends Plugin {
   private dbManager = new DuckDBManager();
   settings: QuackBlocksSettings = DEFAULT_SETTINGS;
 
-  private getPluginDir(): string {
-    const adapter = this.app.vault.adapter as any;
-    const basePath = adapter.basePath || adapter.getBasePath?.();
-    return `${basePath}/${this.manifest.dir}`;
-  }
-
   private getVaultBasePath(): string {
     const adapter = this.app.vault.adapter as any;
     return adapter.basePath || adapter.getBasePath?.();
@@ -85,7 +79,7 @@ export default class QuackBlocksPlugin extends Plugin {
     }
 
     try {
-      await this.dbManager.init(this.getPluginDir(), this.settings.debugLogging);
+      await this.dbManager.init(this.settings.debugLogging);
 
       const cache = this.app.metadataCache.getCache(sourcePath);
       const { datasources, plotDefaults } = parseFrontmatter(cache?.frontmatter);
