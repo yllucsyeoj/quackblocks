@@ -4,9 +4,9 @@
   "description": "Executable SQL code blocks powered by DuckDB WASM",
   "main": "main.js",
   "scripts": {
-    "build": "esbuild main.ts --bundle --outfile=main.js --platform=browser --external:obsidian --external:electron --external:fs --external:path --format=cjs --target=es2020 && npm run copy-wasm",
+    "build": "esbuild main.ts --bundle --outfile=main.js --platform=browser --external:obsidian --external:electron --external:fs --external:path --external:os --format=cjs --target=es2020 && npm run copy-wasm",
     "copy-wasm": "cp node_modules/@duckdb/duckdb-wasm/dist/duckdb-eh.wasm . && cp node_modules/@duckdb/duckdb-wasm/dist/duckdb-browser-eh.worker.js .",
-    "dev": "npm run copy-wasm && esbuild main.ts --bundle --outfile=main.js --platform=browser --external:obsidian --external:electron --external:fs --external:path --format=cjs --target=es2020 --watch"
+    "dev": "npm run copy-wasm && esbuild main.ts --bundle --outfile=main.js --platform=browser --external:obsidian --external:electron --external:fs --external:path --external:os --format=cjs --target=es2020 --watch"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

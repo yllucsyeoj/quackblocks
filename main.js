@@ -30588,6 +30588,13 @@ var QuackBlocksPlugin = class extends import_obsidian2.Plugin {
     const adapter = this.app.vault.adapter;
     return adapter.basePath || adapter.getBasePath?.();
   }
+  expandPath(inputPath) {
+    if (inputPath.startsWith("~/")) {
+      const os = require("os");
+      return inputPath.replace(/^~/, os.homedir());
+    }
+    return inputPath;
+  }
   async onload() {
     await this.loadSettings();
     this.addSettingTab(new QuackBlocksSettingTab(this.app, this));
@@ -30616,9 +30623,10 @@ var QuackBlocksPlugin = class extends import_obsidian2.Plugin {
       const basePath = this.getVaultBasePath();
       const noteDir = path2.dirname(path2.join(basePath, sourcePath));
       const loadErrors = [];
-      for (const [tableName, relativePath] of Object.entries(datasources)) {
+      for (const [tableName, rawPath] of Object.entries(datasources)) {
         try {
-          const absolutePath = path2.resolve(noteDir, relativePath);
+          const expandedPath = this.expandPath(rawPath);
+          const absolutePath = path2.resolve(noteDir, expandedPath);
           await this.dbManager.loadParquet(tableName, absolutePath);
         } catch (err) {
           loadErrors.push(`${tableName}: ${err.message}`);

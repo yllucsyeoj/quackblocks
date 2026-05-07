@@ -21,6 +21,14 @@ export default class QuackBlocksPlugin extends Plugin {
     return adapter.basePath || adapter.getBasePath?.();
   }
 
+  private expandPath(inputPath: string): string {
+    if (inputPath.startsWith("~/")) {
+      const os = require("os");
+      return inputPath.replace(/^~/, os.homedir());
+    }
+    return inputPath;
+  }
+
   async onload() {
     await this.loadSettings();
     this.addSettingTab(new QuackBlocksSettingTab(this.app, this));
@@ -64,9 +72,10 @@ export default class QuackBlocksPlugin extends Plugin {
       const noteDir = path.dirname(path.join(basePath, sourcePath));
 
       const loadErrors: string[] = [];
-      for (const [tableName, relativePath] of Object.entries(datasources)) {
+      for (const [tableName, rawPath] of Object.entries(datasources)) {
         try {
-          const absolutePath = path.resolve(noteDir, relativePath);
+          const expandedPath = this.expandPath(rawPath);
+          const absolutePath = path.resolve(noteDir, expandedPath);
           await this.dbManager.loadParquet(tableName, absolutePath);
         } catch (err: any) {
           loadErrors.push(`${tableName}: ${err.message}`);

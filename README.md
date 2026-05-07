@@ -38,7 +38,16 @@ plotDefaults:
 ---
 ```
 
-Paths are resolved relative to the note's directory. Absolute paths outside the vault are also supported.
+Paths are resolved relative to the note's directory. Absolute paths and `~` home directory expansion are also supported:
+
+```yaml
+---
+datasources:
+  sales: ./data/sales.parquet        # relative to note
+  bigdata: ~/datasets/large.parquet  # expands to $HOME/datasets/large.parquet
+  external: /mnt/data/file.parquet   # absolute path
+---
+```
 
 ### 2. Write `quack` code blocks
 
@@ -100,6 +109,59 @@ SELECT month, revenue FROM sales
 | `waffleX` | `Plot.waffleX` |
 | `text` | `Plot.text` |
 
+### Chart configuration
+
+Chart options inside `{ ... }` are passed to [Observable Plot](https://obsidian.md/plot). Most options work exactly as documented there. QuackBlocks automatically separates **plot-level** options (axes, margins, size) from **mark-level** options (data encodings like `x`, `y`, `fill`).
+
+#### Plot-level options
+
+| Option | Description |
+|--------|-------------|
+| `width` / `height` | Chart size in pixels |
+| `marginLeft` / `marginRight` / `marginTop` / `marginBottom` | Margin overrides |
+| `title` / `subtitle` / `caption` | Chart titles |
+| `grid` | Show grid lines (`true` or axis name) |
+| `style` | CSS styles object |
+| `facet` | Faceting configuration |
+
+#### Mark-level options
+
+| Option | Description |
+|--------|-------------|
+| `x` / `y` | Column name or axis config object for the mark |
+| `fx` / `fy` | Facet column names |
+| `stroke` / `fill` | Column name for color encoding |
+| `r` | Dot radius column or constant |
+| `tip` | Enable tooltips (`true`) |
+
+When a dual-purpose key like `x` or `color` is a **string**, it maps to a column (mark-level). When it's an **object**, it becomes plot-level axis configuration:
+
+```quack
+chart=bar { "x": "month", "y": "revenue", "color": { "scheme": "blues", "legend": true } }
+```
+
+#### Color
+
+QuackBlocks injects a 20-color categorical palette by default. You can override it:
+
+```quack
+chart=dot { "x": "x", "y": "y", "stroke": "category", "color": { "range": ["#e41a1c", "#377eb8"] } }
+```
+
+Or use a continuous scheme:
+
+```quack
+chart=cell { "x": "x", "y": "y", "fill": "value", "color": { "scheme": "blues" } }
+```
+
+#### Faceting
+
+Split charts into small multiples with `fx` or `fy`:
+
+```quack
+chart=dot { "x": "bill_length", "y": "bill_depth", "fx": "species", "stroke": "sex" }
+```
+
 ### Plot defaults
 
 Set global defaults in frontmatter under `plotDefaults`. These are merged with per-block options (block wins).
@@ -127,6 +189,10 @@ plotDefaults:
 
 - Obsidian desktop app (uses Node.js `fs` for Parquet I/O)
 - Parquet files for datasources
+
+## Examples
+
+See the [`examples/`](examples/) folder for a complete Palmer Penguins demo note with tables, bar charts, dot plots, box plots, and faceted charts.
 
 ## Development
 
