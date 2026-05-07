@@ -22,10 +22,33 @@ export default class QuackBlocksPlugin extends Plugin {
   }
 
   private expandPath(inputPath: string): string {
-    if (inputPath.startsWith("~/")) {
+    if (!inputPath.startsWith("~/")) return inputPath;
+
+    // 1. Environment variables (fastest, works in most Electron configs)
+    const envHome = process?.env?.HOME || process?.env?.USERPROFILE;
+    if (envHome) return inputPath.replace(/^~/, envHome);
+
+    // 2. Node os module (requires nodeIntegration)
+    try {
       const os = require("os");
-      return inputPath.replace(/^~/, os.homedir());
-    }
+      const osHome = os.homedir();
+      if (osHome) return inputPath.replace(/^~/, osHome);
+    } catch { /* ignore */ }
+
+    // 3. Derive from vault path: /Users/<name>/... → /Users/<name>
+    try {
+      const base = this.getVaultBasePath();
+      if (base) {
+        const parts = base.split(/[\\/]/).filter(Boolean);
+        if (parts.length >= 2 && parts[0] === "Users") {
+          return inputPath.replace(/^~/, `/${parts[0]}/${parts[1]}`);
+        }
+        if (parts.length >= 2 && parts[0] === "home") {
+          return inputPath.replace(/^~/, `/${parts[0]}/${parts[1]}`);
+        }
+      }
+    } catch { /* ignore */ }
+
     return inputPath;
   }
 
@@ -82,8 +105,12 @@ export default class QuackBlocksPlugin extends Plugin {
         }
       }
 
-      if (loadErrors.length > 0 && this.settings.debugLogging) {
-        console.warn("[quackblocks] Some datasources failed to load:", loadErrors);
+      if (loadErrors.length > 0) {
+        if (this.settings.debugLogging) {
+          console.warn("[quackblocks] Some datasources failed to load:", loadErrors);
+        }
+        renderError(el, `Datasource error: ${loadErrors[0]}`);
+        return;
       }
 
       const { columns, rows } = await this.dbManager.query(sql);

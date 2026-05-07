@@ -30589,9 +30589,30 @@ var QuackBlocksPlugin = class extends import_obsidian2.Plugin {
     return adapter.basePath || adapter.getBasePath?.();
   }
   expandPath(inputPath) {
-    if (inputPath.startsWith("~/")) {
+    if (!inputPath.startsWith("~/"))
+      return inputPath;
+    const envHome = process?.env?.HOME || process?.env?.USERPROFILE;
+    if (envHome)
+      return inputPath.replace(/^~/, envHome);
+    try {
       const os = require("os");
-      return inputPath.replace(/^~/, os.homedir());
+      const osHome = os.homedir();
+      if (osHome)
+        return inputPath.replace(/^~/, osHome);
+    } catch {
+    }
+    try {
+      const base = this.getVaultBasePath();
+      if (base) {
+        const parts = base.split(/[\\/]/).filter(Boolean);
+        if (parts.length >= 2 && parts[0] === "Users") {
+          return inputPath.replace(/^~/, `/${parts[0]}/${parts[1]}`);
+        }
+        if (parts.length >= 2 && parts[0] === "home") {
+          return inputPath.replace(/^~/, `/${parts[0]}/${parts[1]}`);
+        }
+      }
+    } catch {
     }
     return inputPath;
   }
@@ -30632,8 +30653,12 @@ var QuackBlocksPlugin = class extends import_obsidian2.Plugin {
           loadErrors.push(`${tableName}: ${err.message}`);
         }
       }
-      if (loadErrors.length > 0 && this.settings.debugLogging) {
-        console.warn("[quackblocks] Some datasources failed to load:", loadErrors);
+      if (loadErrors.length > 0) {
+        if (this.settings.debugLogging) {
+          console.warn("[quackblocks] Some datasources failed to load:", loadErrors);
+        }
+        renderError(el, `Datasource error: ${loadErrors[0]}`);
+        return;
       }
       const { columns, rows } = await this.dbManager.query(sql);
       if (rows.length === 0) {
