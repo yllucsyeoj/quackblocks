@@ -1,0 +1,9 @@
+{
+  "id": "quackblocks",
+  "name": "QuackBlocks",
+  "version": "1.0.0",
+  "minAppVersion": "1.0.0",
+  "description": "Executable SQL code blocks powered by DuckDB WASM — query parquet data and render tables and charts inline",
+  "author": "Joey",
+  "isDesktopOnly": true
+}

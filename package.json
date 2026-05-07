@@ -1,0 +1,19 @@
+{
+  "name": "quackblocks",
+  "version": "1.0.0",
+  "description": "Executable SQL code blocks powered by DuckDB WASM",
+  "main": "main.js",
+  "scripts": {
+    "build": "esbuild main.ts --bundle --outfile=main.js --platform=browser --external:obsidian --external:electron --external:fs --external:path --format=cjs --target=es2020 && npm run copy-wasm",
+    "copy-wasm": "cp node_modules/@duckdb/duckdb-wasm/dist/duckdb-eh.wasm . && cp node_modules/@duckdb/duckdb-wasm/dist/duckdb-browser-eh.worker.js .",
+    "dev": "npm run copy-wasm && esbuild main.ts --bundle --outfile=main.js --platform=browser --external:obsidian --external:electron --external:fs --external:path --format=cjs --target=es2020 --watch"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "esbuild": "^0.20.0"
+  },
+  "dependencies": {
+    "@duckdb/duckdb-wasm": "^1.32.0",
+    "@observablehq/plot": "^0.6.17"
+  }
+}
