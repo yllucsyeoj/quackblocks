@@ -11,6 +11,14 @@ Executable SQL code blocks for Obsidian, powered by DuckDB WASM. Query local Par
 - **Per-block options** — configure charts with a compact directive syntax
 - **PDF export compatible** — charts use explicit SVG dimensions for reliable export
 
+## Preview
+
+Export your notes to PDF and the charts come with you. Every visualization is rendered as SVG with explicit dimensions, so they survive Obsidian's PDF export perfectly.
+
+![PDF Export Preview](assets/pdf-export-preview.png)
+
+*The screenshot above shows a Palmer Penguins report exported to PDF — tables, bar charts, scatter plots, box plots, and faceted charts all intact.*
+
 ## Installation
 
 ### Manual install
@@ -192,7 +200,7 @@ plotDefaults:
 
 ## Examples
 
-See the [`examples/`](examples/) folder for a complete Palmer Penguins demo note with tables, bar charts, dot plots, box plots, and faceted charts.
+See the [`examples/`](examples/) folder for a complete Palmer Penguins demo note with tables, bar charts, dot plots, box plots, faceted charts, and correlation matrices — designed to look great when exported to PDF.
 
 ## Claude Code Skill
 
@@ -213,6 +221,10 @@ npm run build
 ```
 
 `npm run dev` watches `main.ts` and rebuilds on change.
+
+## Inspiration
+
+QuackBlocks is inspired by [Evidence.dev](https://evidence.dev) — the markdown-based BI framework that proved SQL and documents belong together. Evidence showed that analysts shouldn't have to choose between a notebook and a dashboard; QuackBlocks brings that same philosophy into Obsidian, letting you query Parquet files and render charts inline while you write.
 
 ## License
 
