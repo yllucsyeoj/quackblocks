@@ -194,6 +194,17 @@ plotDefaults:
 
 See the [`examples/`](examples/) folder for a complete Palmer Penguins demo note with tables, bar charts, dot plots, box plots, and faceted charts.
 
+## Claude Code Skill
+
+A companion [Claude Code skill](https://docs.anthropic.com/en/docs/agents/skills) is included in [`skill/`](skill/). Install it to generate QuackBlocks reports from parquet files with natural language prompts.
+
+```bash
+# Copy the skill into your Claude skills directory
+cp -r skill ~/.claude/skills/quackblocks
+```
+
+Then ask Claude: *"Analyze the sales data in ~/datasets/sales.parquet and create a QuackBlocks report with monthly revenue charts."*
+
 ## Development
 
 ```bash
