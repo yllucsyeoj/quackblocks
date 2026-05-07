@@ -21,7 +21,7 @@ Executable SQL code blocks for Obsidian, powered by DuckDB WASM. Query local Par
 
 ### BRAT
 
-Add `joey/quackblocks` (or your repo path) to the [BRAT](https://github.com/TfTHacker/obsidian42-brat) plugin list.
+Add `yllucsyeoj/quackblocks` to the [BRAT](https://github.com/TfTHacker/obsidian42-brat) plugin list.
 
 ## Usage
 
