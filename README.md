@@ -15,7 +15,7 @@ Executable SQL code blocks for Obsidian, powered by DuckDB WASM. Query local Par
 
 Export your notes to PDF and the charts come with you. Every visualization is rendered as SVG with explicit dimensions, so they survive Obsidian's PDF export perfectly.
 
-![PDF Export Preview](assets/pdf-export-preview.png)
+![PDF Export Preview](assets/pdf-export-preview.png?v=2)
 
 *The screenshot above shows a Palmer Penguins report exported to PDF — tables, bar charts, scatter plots, box plots, and faceted charts all intact.*
 
