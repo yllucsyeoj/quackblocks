@@ -1,7 +1,7 @@
 export function renderTable(
   el: HTMLElement,
   columns: string[],
-  rows: any[][]
+  rows: unknown[][]
 ): void {
   const table = el.createEl("table", {
     attr: {

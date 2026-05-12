@@ -178,10 +178,10 @@ export class DuckDBManager {
     const result = await this.conn.query(sql);
 
     const columns = result.schema.fields.map((f) => f.name);
-    const rows: any[][] = [];
+    const rows: unknown[][] = [];
 
     for (let i = 0; i < result.numRows; i++) {
-      const row: any[] = [];
+      const row: unknown[] = [];
       for (const col of columns) {
         const colData = result.getChild(col);
         let val = colData?.get(i);

@@ -1,4 +1,4 @@
 export interface QueryResult {
   columns: string[];
-  rows: any[][];
+  rows: unknown[][];
 }

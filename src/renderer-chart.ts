@@ -1,5 +1,8 @@
 import * as Plot from "@observablehq/plot";
 
+type PlotOptions = Record<string, unknown>;
+type RowData = Record<string, unknown>;
+
 // 20-color palette — high contrast, distinct hues, works on light and dark backgrounds
 // Inspired by Tableau20 but tuned for data viz readability
 const QUACK_PALETTE = [
@@ -9,19 +12,19 @@ const QUACK_PALETTE = [
   "#7570b3", "#e7298a", "#66a61e", "#e6ab02", "#a6761d",
 ];
 
-const MARK_MAP: Record<string, (data: any[], options: any) => Plot.Markish> = {
-  bar: (data, opts) => Plot.barY(data, opts),
-  barX: (data, opts) => Plot.barX(data, opts),
-  line: (data, opts) => Plot.lineY(data, opts),
-  area: (data, opts) => Plot.areaY(data, opts),
-  dot: (data, opts) => Plot.dot(data, opts),
-  cell: (data, opts) => Plot.cell(data, opts),
-  rect: (data, opts) => Plot.rect(data, opts),
-  boxY: (data, opts) => Plot.boxY(data, opts),
-  boxX: (data, opts) => Plot.boxX(data, opts),
-  waffleY: (data, opts) => Plot.waffleY(data, opts),
-  waffleX: (data, opts) => Plot.waffleX(data, opts),
-  text: (data, opts) => Plot.text(data, opts),
+const MARK_MAP: Record<string, (data: RowData[], options: PlotOptions) => Plot.Markish> = {
+  bar: (data, opts) => Plot.barY(data as never[], opts as Plot.BarYOptions),
+  barX: (data, opts) => Plot.barX(data as never[], opts as Plot.BarXOptions),
+  line: (data, opts) => Plot.lineY(data as never[], opts as Plot.LineYOptions),
+  area: (data, opts) => Plot.areaY(data as never[], opts as Plot.AreaYOptions),
+  dot: (data, opts) => Plot.dot(data as never[], opts as Plot.DotOptions),
+  cell: (data, opts) => Plot.cell(data as never[], opts as Plot.CellOptions),
+  rect: (data, opts) => Plot.rect(data as never[], opts as Plot.RectOptions),
+  boxY: (data, opts) => Plot.boxY(data as never[], opts as Plot.BoxYOptions),
+  boxX: (data, opts) => Plot.boxX(data as never[], opts as Plot.BoxXOptions),
+  waffleY: (data, opts) => Plot.waffleY(data as never[], opts as Plot.WaffleYOptions),
+  waffleX: (data, opts) => Plot.waffleX(data as never[], opts as Plot.WaffleXOptions),
+  text: (data, opts) => Plot.text(data as never[], opts as Plot.TextOptions),
 };
 
 // Options that always go to Plot.plot() rather than the mark constructor
@@ -44,7 +47,7 @@ export interface ChartDefaults {
 
 // Build the color scale config. If the user specified a scheme (continuous scale),
 // don't inject our categorical range — they conflict.
-function buildColorScale(userColor?: Record<string, any>): Record<string, any> {
+function buildColorScale(userColor?: PlotOptions): PlotOptions {
   if (!userColor) return { range: QUACK_PALETTE };
   if (userColor.scheme) return { ...userColor };
   return { range: QUACK_PALETTE, ...userColor };
@@ -54,7 +57,7 @@ function buildColorScale(userColor?: Record<string, any>): Record<string, any> {
 // so they don't fall back to black (currentColor).
 const FILLED_MARKS = new Set(["area", "rect"]);
 
-function applyFillDefault(chartType: string, opts: Record<string, any>): Record<string, any> {
+function applyFillDefault(chartType: string, opts: PlotOptions): PlotOptions {
   if (FILLED_MARKS.has(chartType) && !opts.fill && !opts.stroke) {
     return { ...opts, fill: QUACK_PALETTE[0] };
   }
@@ -63,10 +66,10 @@ function applyFillDefault(chartType: string, opts: Record<string, any>): Record<
 
 export function renderChart(
   el: HTMLElement,
-  data: Record<string, any>[],
+  data: RowData[],
   chartType: string,
-  markOptions: Record<string, any>,
-  plotDefaults: Record<string, any>,
+  markOptions: PlotOptions,
+  plotDefaults: PlotOptions,
   defaults: ChartDefaults = { defaultWidth: 640, defaultHeight: 400 }
 ): void {
   const markFn = MARK_MAP[chartType];
@@ -86,8 +89,8 @@ export function renderChart(
   const merged = { ...plotDefaults, ...markOptions };
 
   // Separate plot-level options from mark-level options
-  const plotOptions: Record<string, any> = {};
-  const markOpts: Record<string, any> = {};
+  const plotOptions: PlotOptions = {};
+  const markOpts: PlotOptions = {};
 
   for (const [key, value] of Object.entries(merged)) {
     if (PLOT_LEVEL_KEYS.has(key)) {
@@ -116,13 +119,13 @@ export function renderChart(
       fontSize: "12px",
     },
     ...plotOptions,
-    color: buildColorScale(plotOptions.color),
+    color: buildColorScale(plotOptions.color as PlotOptions | undefined),
     marks: [markFn(data, applyFillDefault(chartType, markOpts))],
   });
 
   // Ensure explicit width/height attributes on the SVG element for PDF export
-  const w = plotOptions.width ?? defaultWidth;
-  const h = plotOptions.height ?? defaultHeight;
+  const w = (plotOptions.width as number) ?? defaultWidth;
+  const h = (plotOptions.height as number) ?? defaultHeight;
   svg.setAttribute("width", String(w));
   svg.setAttribute("height", String(h));
 

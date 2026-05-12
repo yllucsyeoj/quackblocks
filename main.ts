@@ -1,4 +1,4 @@
-import { Plugin } from "obsidian";
+import { Plugin, FileSystemAdapter } from "obsidian";
 import * as path from "path";
 import * as os from "os";
 import { DuckDBManager } from "./src/db";
@@ -13,8 +13,11 @@ export default class QuackBlocksPlugin extends Plugin {
   settings: QuackBlocksSettings = DEFAULT_SETTINGS;
 
   private getVaultBasePath(): string {
-    const adapter = this.app.vault.adapter as any;
-    return adapter.basePath || adapter.getBasePath?.();
+    const adapter = this.app.vault.adapter;
+    if (adapter instanceof FileSystemAdapter) {
+      return adapter.getBasePath();
+    }
+    return "";
   }
 
   private expandPath(inputPath: string): string {
@@ -69,7 +72,7 @@ export default class QuackBlocksPlugin extends Plugin {
     el: HTMLElement,
     sourcePath: string,
     chartType: string | null,
-    chartOptions: Record<string, any>,
+    chartOptions: Record<string, unknown>,
     caption: string | null
   ): Promise<void> {
     renderLoading(el);
@@ -94,8 +97,8 @@ export default class QuackBlocksPlugin extends Plugin {
           const expandedPath = this.expandPath(rawPath);
           const absolutePath = path.resolve(noteDir, expandedPath);
           await this.dbManager.loadParquet(tableName, absolutePath);
-        } catch (err: any) {
-          loadErrors.push(`${tableName}: ${err.message}`);
+        } catch (err: unknown) {
+          loadErrors.push(`${tableName}: ${err instanceof Error ? err.message : String(err)}`);
         }
       }
 
@@ -116,7 +119,7 @@ export default class QuackBlocksPlugin extends Plugin {
 
       if (chartType) {
         const data = rows.map((row) => {
-          const obj: Record<string, any> = {};
+          const obj: Record<string, unknown> = {};
           columns.forEach((col, i) => (obj[col] = row[i]));
           return obj;
         });
@@ -130,8 +133,8 @@ export default class QuackBlocksPlugin extends Plugin {
         renderTable(el, columns, rows);
         if (caption) this.wrapWithCaption(el, caption, "quack-table");
       }
-    } catch (err: any) {
-      renderError(el, err.message || String(err));
+    } catch (err: unknown) {
+      renderError(el, err instanceof Error ? err.message : String(err));
     }
   }
 

@@ -1,11 +1,11 @@
 export interface ParsedFrontmatter {
   datasources: Record<string, string>;
-  plotDefaults: Record<string, any>;
+  plotDefaults: Record<string, unknown>;
 }
 
-export function parseFrontmatter(frontmatter: any): ParsedFrontmatter {
+export function parseFrontmatter(frontmatter: Record<string, unknown> | null | undefined): ParsedFrontmatter {
   const datasources: Record<string, string> = {};
-  const plotDefaults: Record<string, any> = frontmatter?.plotDefaults ?? {};
+  const plotDefaults: Record<string, unknown> = (frontmatter?.plotDefaults as Record<string, unknown>) ?? {};
 
   const raw = frontmatter?.datasources;
   if (raw && typeof raw === "object") {

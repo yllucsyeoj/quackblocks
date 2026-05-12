@@ -1,6 +1,6 @@
 export interface ParsedDirectives {
   chartType: string | null;
-  chartOptions: Record<string, any>;
+  chartOptions: Record<string, unknown>;
   caption: string | null;
   sql: string;
 }
@@ -25,7 +25,7 @@ export function parseCodeBlock(source: string): ParsedDirectives {
   const firstLine = lines[0].trim();
 
   let chartType: string | null = null;
-  let chartOptions: Record<string, any> = {};
+  let chartOptions: Record<string, unknown> = {};
   let caption: string | null = null;
   let sql: string;
 
