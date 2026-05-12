@@ -7,7 +7,7 @@ class QuackLogger implements duckdb.Logger {
     if (entry.level === "WARNING" || entry.level === "ERROR") {
       console.warn(`[quackblocks/duckdb] ${entry.level}: ${entry.text}`);
     } else if (this.debug) {
-      console.log(`[quackblocks/duckdb] ${entry.text}`);
+      console.debug(`[quackblocks/duckdb] ${entry.text}`);
     }
   }
 }
@@ -31,7 +31,7 @@ export class DuckDBManager {
   }
 
   private async _init(debug = false): Promise<void> {
-    if (debug) console.log("[quackblocks] Initializing DuckDB WASM...");
+    if (debug) console.debug("[quackblocks] Initializing DuckDB WASM...");
 
     try {
       // ============================================================
@@ -139,7 +139,7 @@ export class DuckDBManager {
       await this.db.instantiate(wasmUrl);
       this.conn = await this.db.connect();
 
-      if (debug) console.log("[quackblocks] DuckDB initialized");
+      if (debug) console.debug("[quackblocks] DuckDB initialized");
     } catch (err) {
       console.error("[quackblocks] DuckDB init failed:", err);
       this.initPromise = null;
@@ -168,7 +168,7 @@ export class DuckDBManager {
     this.loadedTables.set(tableName, absolutePath);
     // Clear query cache when tables change
     this.queryCache.clear();
-    if (this.debug) console.log(`[quackblocks] Loaded table "${tableName}" from ${absolutePath}`);
+    if (this.debug) console.debug(`[quackblocks] Loaded table "${tableName}" from ${absolutePath}`);
   }
 
   async query(sql: string): Promise<QueryResult> {

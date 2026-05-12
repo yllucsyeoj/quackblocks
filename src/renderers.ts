@@ -54,7 +54,7 @@ export function renderError(el: HTMLElement, message: string): void {
     },
   });
   box.createEl("div", {
-    text: "SQL Error",
+    text: "SQL error",
     attr: {
       style: "font-size: 12px; font-weight: bold; color: var(--text-error); margin-bottom: 4px;",
     },

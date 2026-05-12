@@ -127,5 +127,5 @@ export function renderChart(
   svg.setAttribute("height", String(h));
 
   el.empty();
-  el.innerHTML = svg.outerHTML;
+  el.appendChild(svg);
 }

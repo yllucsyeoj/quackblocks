@@ -51,7 +51,7 @@ export default class QuackBlocksPlugin extends Plugin {
     this.addSettingTab(new QuackBlocksSettingTab(this.app, this));
 
     if (this.settings.debugLogging) {
-      console.log("[quackblocks] Loading plugin...");
+      console.debug("[quackblocks] Loading plugin...");
     }
 
     this.registerMarkdownCodeBlockProcessor(
@@ -158,7 +158,7 @@ export default class QuackBlocksPlugin extends Plugin {
 
   async onunload() {
     if (this.settings.debugLogging) {
-      console.log("[quackblocks] Unloading...");
+      console.debug("[quackblocks] Unloading...");
     }
     await this.dbManager.close();
   }
