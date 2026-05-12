@@ -1,5 +1,6 @@
 import * as duckdb from "@duckdb/duckdb-wasm";
 import * as fs from "fs";
+import { requestUrl } from "obsidian";
 import type { QueryResult } from "./types";
 
 class QuackLogger implements duckdb.Logger {
@@ -102,11 +103,8 @@ export class DuckDBManager {
       // ============================================================
       // CRITICAL: Electron Workaround #2 — Fetch & patch worker
       // ============================================================
-      const workerResponse = await fetch(bundle.mainWorker);
-      if (!workerResponse.ok) {
-        throw new Error(`Failed to fetch DuckDB worker: ${workerResponse.status}`);
-      }
-      let workerScript = await workerResponse.text();
+      const workerResponse = await requestUrl({ url: bundle.mainWorker });
+      let workerScript = workerResponse.text;
 
       // Patch every ).Buffer, to ).Buffer || globalThis.Buffer,
       workerScript = workerScript.replace(
@@ -128,11 +126,8 @@ export class DuckDBManager {
       // ============================================================
       // CRITICAL: Electron Workaround #3 — Blob URL for WASM
       // ============================================================
-      const wasmResponse = await fetch(bundle.mainModule);
-      if (!wasmResponse.ok) {
-        throw new Error(`Failed to fetch DuckDB WASM: ${wasmResponse.status}`);
-      }
-      const wasmBuffer = await wasmResponse.arrayBuffer();
+      const wasmResponse = await requestUrl({ url: bundle.mainModule });
+      const wasmBuffer = wasmResponse.arrayBuffer;
       const wasmBlob = new Blob([wasmBuffer], { type: "application/wasm" });
       const wasmUrl = URL.createObjectURL(wasmBlob);
       this.blobUrls.push(wasmUrl);
