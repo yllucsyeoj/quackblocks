@@ -1,4 +1,5 @@
 import * as duckdb from "@duckdb/duckdb-wasm";
+import * as fs from "fs";
 import type { QueryResult } from "./types";
 
 class QuackLogger implements duckdb.Logger {
@@ -154,7 +155,6 @@ export class DuckDBManager {
       throw new Error("DuckDB not initialized");
     }
 
-    const fs = require("fs");
     if (!fs.existsSync(absolutePath)) {
       throw new Error(`File not found: ${absolutePath}`);
     }

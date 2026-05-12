@@ -1,4 +1,6 @@
 import { Plugin } from "obsidian";
+import * as path from "path";
+import * as os from "os";
 import { DuckDBManager } from "./src/db";
 import { parseFrontmatter } from "./src/frontmatter";
 import { parseCodeBlock } from "./src/parser";
@@ -22,9 +24,8 @@ export default class QuackBlocksPlugin extends Plugin {
     const envHome = process?.env?.HOME || process?.env?.USERPROFILE;
     if (envHome) return inputPath.replace(/^~/, envHome);
 
-    // 2. Node os module (requires nodeIntegration)
+    // 2. Node os module
     try {
-      const os = require("os");
       const osHome = os.homedir();
       if (osHome) return inputPath.replace(/^~/, osHome);
     } catch { /* ignore */ }
@@ -84,7 +85,6 @@ export default class QuackBlocksPlugin extends Plugin {
       const cache = this.app.metadataCache.getCache(sourcePath);
       const { datasources, plotDefaults } = parseFrontmatter(cache?.frontmatter);
 
-      const path = require("path");
       const basePath = this.getVaultBasePath();
       const noteDir = path.dirname(path.join(basePath, sourcePath));
 
