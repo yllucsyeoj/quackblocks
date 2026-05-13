@@ -1,7 +1,9 @@
 "use strict";
+var __create = Object.create;
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
 var __export = (target, all) => {
   for (var name in all)
@@ -15,6 +17,14 @@ var __copyProps = (to, from, except, desc) => {
   }
   return to;
 };
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
 // main.ts
@@ -23,7 +33,9 @@ __export(main_exports, {
   default: () => QuackBlocksPlugin
 });
 module.exports = __toCommonJS(main_exports);
-var import_obsidian2 = require("obsidian");
+var import_obsidian3 = require("obsidian");
+var path2 = __toESM(require("path"));
+var os = __toESM(require("os"));
 
 // node_modules/tslib/tslib.es6.mjs
 function __rest(s2, e) {
@@ -40,11 +52,11 @@ function __rest(s2, e) {
 }
 function __awaiter(thisArg, _arguments, P2, generator) {
   function adopt(value) {
-    return value instanceof P2 ? value : new P2(function(resolve) {
-      resolve(value);
+    return value instanceof P2 ? value : new P2(function(resolve2) {
+      resolve2(value);
     });
   }
-  return new (P2 || (P2 = Promise))(function(resolve, reject) {
+  return new (P2 || (P2 = Promise))(function(resolve2, reject) {
     function fulfilled(value) {
       try {
         step(generator.next(value));
@@ -60,7 +72,7 @@ function __awaiter(thisArg, _arguments, P2, generator) {
       }
     }
     function step(result) {
-      result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
+      result.done ? resolve2(result.value) : adopt(result.value).then(fulfilled, rejected);
     }
     step((generator = generator.apply(thisArg, _arguments || [])).next());
   });
@@ -148,14 +160,14 @@ function __asyncValues(o) {
   }, i);
   function verb(n) {
     i[n] = o[n] && function(v2) {
-      return new Promise(function(resolve, reject) {
-        v2 = o[n](v2), settle(resolve, reject, v2.done, v2.value);
+      return new Promise(function(resolve2, reject) {
+        v2 = o[n](v2), settle(resolve2, reject, v2.done, v2.value);
       });
     };
   }
-  function settle(resolve, reject, d, v2) {
+  function settle(resolve2, reject, d, v2) {
     Promise.resolve(v2).then(function(v3) {
-      resolve({ value: v3, done: d });
+      resolve2({ value: v3, done: d });
     }, reject);
   }
 }
@@ -601,9 +613,9 @@ var AdaptiveByteReader = class {
   }
 };
 var onEvent = (stream, event) => {
-  const handler = (_2) => resolve([event, _2]);
-  let resolve;
-  return [event, handler, new Promise((r) => (resolve = r) && stream["once"](event, handler))];
+  const handler = (_2) => resolve2([event, _2]);
+  let resolve2;
+  return [event, handler, new Promise((r) => (resolve2 = r) && stream["once"](event, handler))];
 };
 function fromNodeStream(stream) {
   return __asyncGenerator(this, arguments, function* fromNodeStream_1() {
@@ -659,7 +671,7 @@ function fromNodeStream(stream) {
     return yield __await(null);
     function cleanup(events2, err2) {
       buffer = buffers = null;
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve2, reject) => {
         for (const [evt, fn] of events2) {
           stream["off"](evt, fn);
         }
@@ -670,7 +682,7 @@ function fromNodeStream(stream) {
         } catch (e) {
           err2 = e || err2;
         } finally {
-          err2 != null ? reject(err2) : resolve();
+          err2 != null ? reject(err2) : resolve2();
         }
       });
     }
@@ -7123,8 +7135,8 @@ var AsyncQueue = class extends ReadableInterop {
     } else if (!this._closedPromiseResolve) {
       return Promise.resolve(ITERATOR_DONE);
     } else {
-      return new Promise((resolve, reject) => {
-        this.resolvers.push({ resolve, reject });
+      return new Promise((resolve2, reject) => {
+        this.resolvers.push({ resolve: resolve2, reject });
       });
     }
   }
@@ -12396,6 +12408,8 @@ async function Xe(s2) {
 var Y = Z(q());
 
 // src/db.ts
+var fs = __toESM(require("fs"));
+var import_obsidian = require("obsidian");
 var QuackLogger = class {
   constructor(debug) {
     this.debug = debug;
@@ -12404,7 +12418,7 @@ var QuackLogger = class {
     if (entry.level === "WARNING" || entry.level === "ERROR") {
       console.warn(`[quackblocks/duckdb] ${entry.level}: ${entry.text}`);
     } else if (this.debug) {
-      console.log(`[quackblocks/duckdb] ${entry.text}`);
+      console.debug(`[quackblocks/duckdb] ${entry.text}`);
     }
   }
 };
@@ -12430,7 +12444,7 @@ var DuckDBManager = class {
   }
   async _init(debug = false) {
     if (debug)
-      console.log("[quackblocks] Initializing DuckDB WASM...");
+      console.debug("[quackblocks] Initializing DuckDB WASM...");
     try {
       const bundles = Je();
       const bundle = await Xe(bundles);
@@ -12487,11 +12501,8 @@ var DuckDBManager = class {
   globalThis.Buffer = FakeBuffer;
 })();
 `;
-      const workerResponse = await fetch(bundle.mainWorker);
-      if (!workerResponse.ok) {
-        throw new Error(`Failed to fetch DuckDB worker: ${workerResponse.status}`);
-      }
-      let workerScript = await workerResponse.text();
+      const workerResponse = await (0, import_obsidian.requestUrl)({ url: bundle.mainWorker });
+      let workerScript = workerResponse.text;
       workerScript = workerScript.replace(
         /\)\.Buffer,/g,
         ").Buffer || globalThis.Buffer,"
@@ -12505,18 +12516,15 @@ var DuckDBManager = class {
       const logger = new QuackLogger(debug);
       const worker = new Worker(workerUrl);
       this.db = new f(logger, worker);
-      const wasmResponse = await fetch(bundle.mainModule);
-      if (!wasmResponse.ok) {
-        throw new Error(`Failed to fetch DuckDB WASM: ${wasmResponse.status}`);
-      }
-      const wasmBuffer = await wasmResponse.arrayBuffer();
+      const wasmResponse = await (0, import_obsidian.requestUrl)({ url: bundle.mainModule });
+      const wasmBuffer = wasmResponse.arrayBuffer;
       const wasmBlob = new Blob([wasmBuffer], { type: "application/wasm" });
       const wasmUrl = URL.createObjectURL(wasmBlob);
       this.blobUrls.push(wasmUrl);
       await this.db.instantiate(wasmUrl);
       this.conn = await this.db.connect();
       if (debug)
-        console.log("[quackblocks] DuckDB initialized");
+        console.debug("[quackblocks] DuckDB initialized");
     } catch (err) {
       console.error("[quackblocks] DuckDB init failed:", err);
       this.initPromise = null;
@@ -12529,7 +12537,6 @@ var DuckDBManager = class {
     if (!this.db || !this.conn) {
       throw new Error("DuckDB not initialized");
     }
-    const fs = require("fs");
     if (!fs.existsSync(absolutePath)) {
       throw new Error(`File not found: ${absolutePath}`);
     }
@@ -12542,7 +12549,7 @@ var DuckDBManager = class {
     this.loadedTables.set(tableName, absolutePath);
     this.queryCache.clear();
     if (this.debug)
-      console.log(`[quackblocks] Loaded table "${tableName}" from ${absolutePath}`);
+      console.debug(`[quackblocks] Loaded table "${tableName}" from ${absolutePath}`);
   }
   async query(sql) {
     if (!this.conn) {
@@ -12631,7 +12638,7 @@ function parseCodeBlock(source) {
     const optionsMatch = firstLine.match(OPTIONS_RE);
     if (optionsMatch) {
       try {
-        chartOptions = new Function("return (" + optionsMatch[0] + ")")();
+        chartOptions = JSON.parse(optionsMatch[0]);
       } catch (err) {
         console.warn("[quackblocks] Failed to parse chart options:", optionsMatch[0], err);
       }
@@ -12686,7 +12693,7 @@ function renderError(el, message) {
     }
   });
   box.createEl("div", {
-    text: "SQL Error",
+    text: "SQL error",
     attr: {
       style: "font-size: 12px; font-weight: bold; color: var(--text-error); margin-bottom: 4px;"
     }
@@ -13567,13 +13574,13 @@ function entering() {
 function axis(orient, scale) {
   var tickArguments = [], tickValues = null, tickFormat2 = null, tickSizeInner = 6, tickSizeOuter = 6, tickPadding = 3, offset2 = typeof window !== "undefined" && window.devicePixelRatio > 1 ? 0 : 0.5, k3 = orient === top || orient === left ? -1 : 1, x3 = orient === left || orient === right ? "x" : "y", transform2 = orient === top || orient === bottom ? translateX : translateY;
   function axis2(context) {
-    var values2 = tickValues == null ? scale.ticks ? scale.ticks.apply(scale, tickArguments) : scale.domain() : tickValues, format3 = tickFormat2 == null ? scale.tickFormat ? scale.tickFormat.apply(scale, tickArguments) : identity_default : tickFormat2, spacing = Math.max(tickSizeInner, 0) + tickPadding, range3 = scale.range(), range0 = +range3[0] + offset2, range1 = +range3[range3.length - 1] + offset2, position2 = (scale.bandwidth ? center : number2)(scale.copy(), offset2), selection2 = context.selection ? context.selection() : context, path2 = selection2.selectAll(".domain").data([null]), tick = selection2.selectAll(".tick").data(values2, scale).order(), tickExit = tick.exit(), tickEnter = tick.enter().append("g").attr("class", "tick"), line2 = tick.select("line"), text2 = tick.select("text");
-    path2 = path2.merge(path2.enter().insert("path", ".tick").attr("class", "domain").attr("stroke", "currentColor"));
+    var values2 = tickValues == null ? scale.ticks ? scale.ticks.apply(scale, tickArguments) : scale.domain() : tickValues, format3 = tickFormat2 == null ? scale.tickFormat ? scale.tickFormat.apply(scale, tickArguments) : identity_default : tickFormat2, spacing = Math.max(tickSizeInner, 0) + tickPadding, range3 = scale.range(), range0 = +range3[0] + offset2, range1 = +range3[range3.length - 1] + offset2, position2 = (scale.bandwidth ? center : number2)(scale.copy(), offset2), selection2 = context.selection ? context.selection() : context, path3 = selection2.selectAll(".domain").data([null]), tick = selection2.selectAll(".tick").data(values2, scale).order(), tickExit = tick.exit(), tickEnter = tick.enter().append("g").attr("class", "tick"), line2 = tick.select("line"), text2 = tick.select("text");
+    path3 = path3.merge(path3.enter().insert("path", ".tick").attr("class", "domain").attr("stroke", "currentColor"));
     tick = tick.merge(tickEnter);
     line2 = line2.merge(tickEnter.append("line").attr("stroke", "currentColor").attr(x3 + "2", k3 * tickSizeInner));
     text2 = text2.merge(tickEnter.append("text").attr("fill", "currentColor").attr(x3, k3 * spacing).attr("dy", orient === top ? "0em" : orient === bottom ? "0.71em" : "0.32em"));
     if (context !== selection2) {
-      path2 = path2.transition(context);
+      path3 = path3.transition(context);
       tick = tick.transition(context);
       line2 = line2.transition(context);
       text2 = text2.transition(context);
@@ -13586,7 +13593,7 @@ function axis(orient, scale) {
       });
     }
     tickExit.remove();
-    path2.attr("d", orient === left || orient === right ? tickSizeOuter ? "M" + k3 * tickSizeOuter + "," + range0 + "H" + offset2 + "V" + range1 + "H" + k3 * tickSizeOuter : "M" + offset2 + "," + range0 + "V" + range1 : tickSizeOuter ? "M" + range0 + "," + k3 * tickSizeOuter + "V" + offset2 + "H" + range1 + "V" + k3 * tickSizeOuter : "M" + range0 + "," + offset2 + "H" + range1);
+    path3.attr("d", orient === left || orient === right ? tickSizeOuter ? "M" + k3 * tickSizeOuter + "," + range0 + "H" + offset2 + "V" + range1 + "H" + k3 * tickSizeOuter : "M" + offset2 + "," + range0 + "V" + range1 : tickSizeOuter ? "M" + range0 + "," + k3 * tickSizeOuter + "V" + offset2 + "H" + range1 + "V" + k3 * tickSizeOuter : "M" + range0 + "," + offset2 + "H" + range1);
     tick.attr("opacity", 1).attr("transform", function(d) {
       return transform2(position2(d) + offset2);
     });
@@ -16258,10 +16265,10 @@ function transition_default() {
 // node_modules/d3-transition/src/transition/end.js
 function end_default() {
   var on0, on1, that = this, id2 = that._id, size = that.size();
-  return new Promise(function(resolve, reject) {
+  return new Promise(function(resolve2, reject) {
     var cancel = { value: reject }, end = { value: function() {
       if (--size === 0)
-        resolve();
+        resolve2();
     } };
     that.each(function() {
       var schedule = set2(this, id2), on = schedule.on;
@@ -16274,7 +16281,7 @@ function end_default() {
       schedule.on = on1;
     });
     if (size === 0)
-      resolve();
+      resolve2();
   });
 }
 
@@ -17969,7 +17976,7 @@ function appendRound2(digits) {
 // node_modules/d3-geo/src/path/index.js
 function path_default(projection3, context) {
   let digits = 3, pointRadius = 4.5, projectionStream, contextStream;
-  function path2(object) {
+  function path3(object) {
     if (object) {
       if (typeof pointRadius === "function")
         contextStream.pointRadius(+pointRadius.apply(this, arguments));
@@ -17977,43 +17984,43 @@ function path_default(projection3, context) {
     }
     return contextStream.result();
   }
-  path2.area = function(object) {
+  path3.area = function(object) {
     stream_default(object, projectionStream(area_default));
     return area_default.result();
   };
-  path2.measure = function(object) {
+  path3.measure = function(object) {
     stream_default(object, projectionStream(measure_default));
     return measure_default.result();
   };
-  path2.bounds = function(object) {
+  path3.bounds = function(object) {
     stream_default(object, projectionStream(bounds_default));
     return bounds_default.result();
   };
-  path2.centroid = function(object) {
+  path3.centroid = function(object) {
     stream_default(object, projectionStream(centroid_default));
     return centroid_default.result();
   };
-  path2.projection = function(_2) {
+  path3.projection = function(_2) {
     if (!arguments.length)
       return projection3;
     projectionStream = _2 == null ? (projection3 = null, identity_default3) : (projection3 = _2).stream;
-    return path2;
+    return path3;
   };
-  path2.context = function(_2) {
+  path3.context = function(_2) {
     if (!arguments.length)
       return context;
     contextStream = _2 == null ? (context = null, new PathString(digits)) : new PathContext(context = _2);
     if (typeof pointRadius !== "function")
       contextStream.pointRadius(pointRadius);
-    return path2;
+    return path3;
   };
-  path2.pointRadius = function(_2) {
+  path3.pointRadius = function(_2) {
     if (!arguments.length)
       return pointRadius;
     pointRadius = typeof _2 === "function" ? _2 : (contextStream.pointRadius(+_2), +_2);
-    return path2;
+    return path3;
   };
-  path2.digits = function(_2) {
+  path3.digits = function(_2) {
     if (!arguments.length)
       return digits;
     if (_2 == null)
@@ -18026,9 +18033,9 @@ function path_default(projection3, context) {
     }
     if (context === null)
       contextStream = new PathString(digits);
-    return path2;
+    return path3;
   };
-  return path2.projection(projection3).digits(digits).context(context);
+  return path3.projection(projection3).digits(digits).context(context);
 }
 
 // node_modules/d3-geo/src/transform.js
@@ -20840,13 +20847,13 @@ function y2(p2) {
 
 // node_modules/d3-shape/src/line.js
 function line_default2(x3, y3) {
-  var defined2 = constant_default4(true), context = null, curve = linear_default, output = null, path2 = withPath(line2);
+  var defined2 = constant_default4(true), context = null, curve = linear_default, output = null, path3 = withPath(line2);
   x3 = typeof x3 === "function" ? x3 : x3 === void 0 ? x2 : constant_default4(x3);
   y3 = typeof y3 === "function" ? y3 : y3 === void 0 ? y2 : constant_default4(y3);
   function line2(data) {
     var i, n = (data = array_default(data)).length, d, defined0 = false, buffer;
     if (context == null)
-      output = curve(buffer = path2());
+      output = curve(buffer = path3());
     for (i = 0; i <= n; ++i) {
       if (!(i < n && defined2(d = data[i], i, data)) === defined0) {
         if (defined0 = !defined0)
@@ -20880,14 +20887,14 @@ function line_default2(x3, y3) {
 
 // node_modules/d3-shape/src/area.js
 function area_default2(x05, y05, y12) {
-  var x12 = null, defined2 = constant_default4(true), context = null, curve = linear_default, output = null, path2 = withPath(area2);
+  var x12 = null, defined2 = constant_default4(true), context = null, curve = linear_default, output = null, path3 = withPath(area2);
   x05 = typeof x05 === "function" ? x05 : x05 === void 0 ? x2 : constant_default4(+x05);
   y05 = typeof y05 === "function" ? y05 : y05 === void 0 ? constant_default4(0) : constant_default4(+y05);
   y12 = typeof y12 === "function" ? y12 : y12 === void 0 ? y2 : constant_default4(+y12);
   function area2(data) {
     var i, j2, k3, n = (data = array_default(data)).length, d, defined0 = false, buffer, x0z = new Array(n), y0z = new Array(n);
     if (context == null)
-      output = curve(buffer = path2());
+      output = curve(buffer = path3());
     for (i = 0; i <= n; ++i) {
       if (!(i < n && defined2(d = data[i], i, data)) === defined0) {
         if (defined0 = !defined0) {
@@ -26235,17 +26242,17 @@ function markerTick(orient) {
   return (color3, context) => create2("svg:marker", context).attr("viewBox", "-3 -3 6 6").attr("markerWidth", 6).attr("markerHeight", 6).attr("orient", orient).attr("stroke", color3).call((marker) => marker.append("path").attr("d", "M0,-3v6")).node();
 }
 var nextMarkerId = 0;
-function applyMarkers(path2, mark, { stroke: S2 }, context) {
-  return applyMarkersColor(path2, mark, S2 && ((i) => S2[i]), null, context);
+function applyMarkers(path3, mark, { stroke: S2 }, context) {
+  return applyMarkersColor(path3, mark, S2 && ((i) => S2[i]), null, context);
 }
-function applyGroupedMarkers(path2, mark, { stroke: S2, z: Z3 }, context) {
-  return applyMarkersColor(path2, mark, S2 && (([i]) => S2[i]), Z3, context);
+function applyGroupedMarkers(path3, mark, { stroke: S2, z: Z3 }, context) {
+  return applyMarkersColor(path3, mark, S2 && (([i]) => S2[i]), Z3, context);
 }
 var START = 1;
 var END = 2;
-function getGroupedOrientation(path2, Z3) {
+function getGroupedOrientation(path3, Z3) {
   const O2 = new Uint8Array(Z3.length);
-  const D3 = path2.data().filter((I2) => I2.length > 1);
+  const D3 = path3.data().filter((I2) => I2.length > 1);
   const n = D3.length;
   for (let i = 0, z2 = unset; i < n; ++i) {
     const I2 = D3[i];
@@ -26265,11 +26272,11 @@ function getGroupedOrientation(path2, Z3) {
   }
   return ([i]) => O2[i];
 }
-function applyMarkersColor(path2, { markerStart, markerMid, markerEnd, stroke }, strokeof = () => stroke, Z3, context) {
+function applyMarkersColor(path3, { markerStart, markerMid, markerEnd, stroke }, strokeof = () => stroke, Z3, context) {
   if (!markerStart && !markerMid && !markerEnd)
     return;
   const iriByMarkerColor = /* @__PURE__ */ new Map();
-  const orient = Z3 && getGroupedOrientation(path2, Z3);
+  const orient = Z3 && getGroupedOrientation(path3, Z3);
   function applyMarker(name, marker, filter2) {
     return function(i) {
       if (filter2 && !filter2(i))
@@ -26289,13 +26296,13 @@ function applyMarkersColor(path2, { markerStart, markerMid, markerEnd, stroke },
     };
   }
   if (markerStart)
-    path2.each(applyMarker("marker-start", markerStart, orient && ((i) => orient(i) & START)));
+    path3.each(applyMarker("marker-start", markerStart, orient && ((i) => orient(i) & START)));
   if (markerMid && orient)
-    path2.each(applyMarker("marker-start", markerMid, (i) => !(orient(i) & START)));
+    path3.each(applyMarker("marker-start", markerMid, (i) => !(orient(i) & START)));
   if (markerMid)
-    path2.each(applyMarker("marker-mid", markerMid));
+    path3.each(applyMarker("marker-mid", markerMid));
   if (markerEnd)
-    path2.each(applyMarker("marker-end", markerEnd, orient && ((i) => orient(i) & END)));
+    path3.each(applyMarker("marker-end", markerEnd, orient && ((i) => orient(i) & END)));
 }
 
 // node_modules/@observablehq/plot/src/transforms/inset.js
@@ -28309,7 +28316,7 @@ var Frame = class extends Mark {
     const y12 = marginTop + insetTop;
     const y22 = height - marginBottom - insetBottom;
     return create2(anchor ? "svg:line" : rx1y1 || rx1y2 || rx2y1 || rx2y2 ? "svg:path" : "svg:rect", context).datum(0).call(applyIndirectStyles, this, dimensions, context).call(applyDirectStyles, this).call(applyChannelStyles, this, channels).call(applyTransform, this, {}).call(
-      anchor === "left" ? (line2) => line2.attr("x1", x12).attr("x2", x12).attr("y1", y12).attr("y2", y22) : anchor === "right" ? (line2) => line2.attr("x1", x22).attr("x2", x22).attr("y1", y12).attr("y2", y22) : anchor === "top" ? (line2) => line2.attr("x1", x12).attr("x2", x22).attr("y1", y12).attr("y2", y12) : anchor === "bottom" ? (line2) => line2.attr("x1", x12).attr("x2", x22).attr("y1", y22).attr("y2", y22) : rx1y1 || rx1y2 || rx2y1 || rx2y2 ? (path2) => path2.call(applyRoundedRect, x12, y12, x22, y22, this) : (rect2) => rect2.attr("x", x12).attr("y", y12).attr("width", x22 - x12).attr("height", y22 - y12).attr("rx", rx).attr("ry", ry)
+      anchor === "left" ? (line2) => line2.attr("x1", x12).attr("x2", x12).attr("y1", y12).attr("y2", y22) : anchor === "right" ? (line2) => line2.attr("x1", x22).attr("x2", x22).attr("y1", y12).attr("y2", y22) : anchor === "top" ? (line2) => line2.attr("x1", x12).attr("x2", x22).attr("y1", y12).attr("y2", y12) : anchor === "bottom" ? (line2) => line2.attr("x1", x12).attr("x2", x22).attr("y1", y22).attr("y2", y22) : rx1y1 || rx1y2 || rx2y1 || rx2y2 ? (path3) => path3.call(applyRoundedRect, x12, y12, x22, y22, this) : (rect2) => rect2.attr("x", x12).attr("y", y12).attr("width", x22 - x12).attr("height", y22 - y12).attr("rx", rx).attr("ry", ry)
     ).node();
   }
 };
@@ -28489,9 +28496,9 @@ var Tip = class extends Mark {
           const fitBottom = y4 - h2 - m2 - r * 2 > 0;
           a3 = fitLeft && fitRight ? fitTop && fitBottom ? mark.preferredAnchor : fitBottom ? "bottom" : "top" : fitTop && fitBottom ? fitLeft ? "left" : "right" : (fitLeft || fitRight) && (fitTop || fitBottom) ? `${fitBottom ? "bottom" : "top"}-${fitLeft ? "left" : "right"}` : mark.preferredAnchor;
         }
-        const path2 = this.firstChild;
+        const path3 = this.firstChild;
         const text2 = this.lastChild;
-        path2.setAttribute("d", getPath(a3, m2, r, w2, h2));
+        path3.setAttribute("d", getPath(a3, m2, r, w2, h2));
         if (tx)
           for (const t of text2.childNodes)
             t.setAttribute("x", -tx);
@@ -30016,7 +30023,7 @@ var Line = class extends Mark {
     ).node();
   }
 };
-function sphereLine(path2, X3, Y3) {
+function sphereLine(path3, X3, Y3) {
   X3 = coerceNumbers(X3);
   Y3 = coerceNumbers(Y3);
   return (I2) => {
@@ -30030,7 +30037,7 @@ function sphereLine(path2, X3, Y3) {
         line2.push([X3[i], Y3[i]]);
       }
     }
-    return path2({ type: "MultiLineString", coordinates: lines });
+    return path3({ type: "MultiLineString", coordinates: lines });
   };
 }
 function lineY(data, { x: x3 = indexOf, y: y3 = identity6, ...options } = {}) {
@@ -30568,17 +30575,17 @@ function renderChart(el, data, chartType, markOptions, plotDefaults, defaults12 
   svg.setAttribute("width", String(w2));
   svg.setAttribute("height", String(h2));
   el.empty();
-  el.innerHTML = svg.outerHTML;
+  el.appendChild(svg);
 }
 
 // src/settings.ts
-var import_obsidian = require("obsidian");
+var import_obsidian2 = require("obsidian");
 var DEFAULT_SETTINGS = {
   debugLogging: false,
   defaultChartWidth: 640,
   defaultChartHeight: 400
 };
-var QuackBlocksSettingTab = class extends import_obsidian.PluginSettingTab {
+var QuackBlocksSettingTab = class extends import_obsidian2.PluginSettingTab {
   constructor(app, plugin) {
     super(app, plugin);
     this.plugin = plugin;
@@ -30586,13 +30593,13 @@ var QuackBlocksSettingTab = class extends import_obsidian.PluginSettingTab {
   display() {
     const { containerEl } = this;
     containerEl.empty();
-    new import_obsidian.Setting(containerEl).setName("Debug logging").setDesc("Log DuckDB lifecycle events and query details to the developer console").addToggle(
+    new import_obsidian2.Setting(containerEl).setName("Debug logging").setDesc("Log duckdb lifecycle events and query details to the developer console").addToggle(
       (toggle) => toggle.setValue(this.plugin.settings.debugLogging).onChange(async (value) => {
         this.plugin.settings.debugLogging = value;
         await this.plugin.saveSettings();
       })
     );
-    new import_obsidian.Setting(containerEl).setName("Default chart width").setDesc("Default width in pixels for charts (overridable per-block or via plotDefaults)").addText(
+    new import_obsidian2.Setting(containerEl).setName("Default chart width").setDesc("Default width in pixels for charts (overridable per-block or via plotdefaults)").addText(
       (text2) => text2.setPlaceholder("640").setValue(String(this.plugin.settings.defaultChartWidth)).onChange(async (value) => {
         const num = parseInt(value, 10);
         if (!isNaN(num) && num > 0) {
@@ -30601,7 +30608,7 @@ var QuackBlocksSettingTab = class extends import_obsidian.PluginSettingTab {
         }
       })
     );
-    new import_obsidian.Setting(containerEl).setName("Default chart height").setDesc("Default height in pixels for charts (overridable per-block or via plotDefaults)").addText(
+    new import_obsidian2.Setting(containerEl).setName("Default chart height").setDesc("Default height in pixels for charts (overridable per-block or via plotdefaults)").addText(
       (text2) => text2.setPlaceholder("400").setValue(String(this.plugin.settings.defaultChartHeight)).onChange(async (value) => {
         const num = parseInt(value, 10);
         if (!isNaN(num) && num > 0) {
@@ -30614,7 +30621,7 @@ var QuackBlocksSettingTab = class extends import_obsidian.PluginSettingTab {
 };
 
 // main.ts
-var QuackBlocksPlugin = class extends import_obsidian2.Plugin {
+var QuackBlocksPlugin = class extends import_obsidian3.Plugin {
   constructor() {
     super(...arguments);
     this.dbManager = new DuckDBManager();
@@ -30622,7 +30629,10 @@ var QuackBlocksPlugin = class extends import_obsidian2.Plugin {
   }
   getVaultBasePath() {
     const adapter = this.app.vault.adapter;
-    return adapter.basePath || adapter.getBasePath?.();
+    if (adapter instanceof import_obsidian3.FileSystemAdapter) {
+      return adapter.getBasePath();
+    }
+    return "";
   }
   expandPath(inputPath) {
     if (!inputPath.startsWith("~/"))
@@ -30631,7 +30641,6 @@ var QuackBlocksPlugin = class extends import_obsidian2.Plugin {
     if (envHome)
       return inputPath.replace(/^~/, envHome);
     try {
-      const os = require("os");
       const osHome = os.homedir();
       if (osHome)
         return inputPath.replace(/^~/, osHome);
@@ -30656,7 +30665,7 @@ var QuackBlocksPlugin = class extends import_obsidian2.Plugin {
     await this.loadSettings();
     this.addSettingTab(new QuackBlocksSettingTab(this.app, this));
     if (this.settings.debugLogging) {
-      console.log("[quackblocks] Loading plugin...");
+      console.debug("[quackblocks] Loading plugin...");
     }
     this.registerMarkdownCodeBlockProcessor(
       "quack",
@@ -30676,7 +30685,6 @@ var QuackBlocksPlugin = class extends import_obsidian2.Plugin {
       await this.dbManager.init(this.settings.debugLogging);
       const cache = this.app.metadataCache.getCache(sourcePath);
       const { datasources, plotDefaults } = parseFrontmatter(cache?.frontmatter);
-      const path2 = require("path");
       const basePath = this.getVaultBasePath();
       const noteDir = path2.dirname(path2.join(basePath, sourcePath));
       const loadErrors = [];
@@ -30686,7 +30694,7 @@ var QuackBlocksPlugin = class extends import_obsidian2.Plugin {
           const absolutePath = path2.resolve(noteDir, expandedPath);
           await this.dbManager.loadParquet(tableName, absolutePath);
         } catch (err) {
-          loadErrors.push(`${tableName}: ${err.message}`);
+          loadErrors.push(`${tableName}: ${err instanceof Error ? err.message : String(err)}`);
         }
       }
       if (loadErrors.length > 0) {
@@ -30720,7 +30728,7 @@ var QuackBlocksPlugin = class extends import_obsidian2.Plugin {
           this.wrapWithCaption(el, caption, "quack-table");
       }
     } catch (err) {
-      renderError(el, err.message || String(err));
+      renderError(el, err instanceof Error ? err.message : String(err));
     }
   }
   wrapWithCaption(el, caption, className) {
@@ -30742,7 +30750,7 @@ var QuackBlocksPlugin = class extends import_obsidian2.Plugin {
   }
   async onunload() {
     if (this.settings.debugLogging) {
-      console.log("[quackblocks] Unloading...");
+      console.debug("[quackblocks] Unloading...");
     }
     await this.dbManager.close();
   }
