@@ -1,7 +1,8 @@
 import * as Plot from "@observablehq/plot";
+import type { CellValue } from "./types";
 
 type PlotOptions = Record<string, unknown>;
-type RowData = Record<string, unknown>;
+type RowData = Record<string, CellValue>;
 
 // 20-color palette — high contrast, distinct hues, works on light and dark backgrounds
 // Inspired by Tableau20 but tuned for data viz readability

@@ -1,4 +1,5 @@
 import { Plugin, FileSystemAdapter } from "obsidian";
+import type { CellValue } from "./src/types";
 import * as path from "path";
 import * as os from "os";
 import { DuckDBManager } from "./src/db";
@@ -119,7 +120,7 @@ export default class QuackBlocksPlugin extends Plugin {
 
       if (chartType) {
         const data = rows.map((row) => {
-          const obj: Record<string, unknown> = {};
+          const obj: Record<string, CellValue> = {};
           columns.forEach((col, i) => (obj[col] = row[i]));
           return obj;
         });

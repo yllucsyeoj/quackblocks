@@ -1,7 +1,7 @@
 import * as duckdb from "@duckdb/duckdb-wasm";
 import * as fs from "fs";
 import { requestUrl } from "obsidian";
-import type { QueryResult } from "./types";
+import type { QueryResult, CellValue } from "./types";
 
 class QuackLogger implements duckdb.Logger {
   constructor(private debug: boolean) {}
@@ -178,10 +178,10 @@ export class DuckDBManager {
     const result = await this.conn.query(sql);
 
     const columns = result.schema.fields.map((f) => f.name);
-    const rows: unknown[][] = [];
+    const rows: CellValue[][] = [];
 
     for (let i = 0; i < result.numRows; i++) {
-      const row: unknown[] = [];
+      const row: CellValue[] = [];
       for (const col of columns) {
         const colData = result.getChild(col);
         let val = colData?.get(i);

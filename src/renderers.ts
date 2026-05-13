@@ -1,7 +1,9 @@
+import type { CellValue } from "./types";
+
 export function renderTable(
   el: HTMLElement,
   columns: string[],
-  rows: unknown[][]
+  rows: CellValue[][]
 ): void {
   const table = el.createEl("table", {
     attr: {

@@ -27,7 +27,7 @@ export class QuackBlocksSettingTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName("Debug logging")
-      .setDesc("log DuckDB lifecycle events and query details to the developer console")
+      .setDesc("Log duckdb lifecycle events and query details to the developer console")
       .addToggle((toggle) =>
         toggle
           .setValue(this.plugin.settings.debugLogging)
@@ -39,7 +39,7 @@ export class QuackBlocksSettingTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName("Default chart width")
-      .setDesc("default width in pixels for charts (overridable per-block or via plotDefaults)")
+      .setDesc("Default width in pixels for charts (overridable per-block or via plotdefaults)")
       .addText((text) =>
         text
           .setPlaceholder("640")
@@ -55,7 +55,7 @@ export class QuackBlocksSettingTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName("Default chart height")
-      .setDesc("default height in pixels for charts (overridable per-block or via plotDefaults)")
+      .setDesc("Default height in pixels for charts (overridable per-block or via plotdefaults)")
       .addText((text) =>
         text
           .setPlaceholder("400")
