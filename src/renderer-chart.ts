@@ -14,18 +14,18 @@ const QUACK_PALETTE = [
 ];
 
 const MARK_MAP: Record<string, (data: RowData[], options: PlotOptions) => Plot.Markish> = {
-  bar: (data, opts) => Plot.barY(data as never[], opts as Plot.BarYOptions),
-  barX: (data, opts) => Plot.barX(data as never[], opts as Plot.BarXOptions),
-  line: (data, opts) => Plot.lineY(data as never[], opts as Plot.LineYOptions),
-  area: (data, opts) => Plot.areaY(data as never[], opts as Plot.AreaYOptions),
-  dot: (data, opts) => Plot.dot(data as never[], opts as Plot.DotOptions),
-  cell: (data, opts) => Plot.cell(data as never[], opts as Plot.CellOptions),
-  rect: (data, opts) => Plot.rect(data as never[], opts as Plot.RectOptions),
-  boxY: (data, opts) => Plot.boxY(data as never[], opts as Plot.BoxYOptions),
-  boxX: (data, opts) => Plot.boxX(data as never[], opts as Plot.BoxXOptions),
-  waffleY: (data, opts) => Plot.waffleY(data as never[], opts as Plot.WaffleYOptions),
-  waffleX: (data, opts) => Plot.waffleX(data as never[], opts as Plot.WaffleXOptions),
-  text: (data, opts) => Plot.text(data as never[], opts as Plot.TextOptions),
+  bar: (data, opts) => Plot.barY(data as never[], opts),
+  barX: (data, opts) => Plot.barX(data as never[], opts),
+  line: (data, opts) => Plot.lineY(data as never[], opts),
+  area: (data, opts) => Plot.areaY(data as never[], opts),
+  dot: (data, opts) => Plot.dot(data as never[], opts),
+  cell: (data, opts) => Plot.cell(data as never[], opts),
+  rect: (data, opts) => Plot.rect(data as never[], opts),
+  boxY: (data, opts) => Plot.boxY(data as never[], opts),
+  boxX: (data, opts) => Plot.boxX(data as never[], opts),
+  waffleY: (data, opts) => Plot.waffleY(data as never[], opts),
+  waffleX: (data, opts) => Plot.waffleX(data as never[], opts),
+  text: (data, opts) => Plot.text(data as never[], opts),
 };
 
 // Options that always go to Plot.plot() rather than the mark constructor
@@ -105,7 +105,7 @@ export function renderChart(
   }
 
   // Resolve Obsidian CSS vars to actual colors for PDF export compatibility
-  const computedStyle = getComputedStyle(document.body);
+  const computedStyle = getComputedStyle(activeDocument.body);
   const textColor = computedStyle.getPropertyValue("--text-normal").trim() || "#1a1a1a";
 
   const { defaultWidth, defaultHeight } = defaults;

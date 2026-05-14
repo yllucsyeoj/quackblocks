@@ -11749,6 +11749,22 @@ var te = ((i) => (i[i.NONE = 0] = "NONE", i[i.DEBUG = 1] = "DEBUG", i[i.INFO = 2
 var se = ((n) => (n[n.NONE = 0] = "NONE", n[n.CONNECT = 1] = "CONNECT", n[n.DISCONNECT = 2] = "DISCONNECT", n[n.OPEN = 3] = "OPEN", n[n.QUERY = 4] = "QUERY", n[n.INSTANTIATE = 5] = "INSTANTIATE", n))(se || {});
 var ne = ((n) => (n[n.NONE = 0] = "NONE", n[n.OK = 1] = "OK", n[n.ERROR = 2] = "ERROR", n[n.START = 3] = "START", n[n.RUN = 4] = "RUN", n[n.CAPTURE = 5] = "CAPTURE", n))(ne || {});
 var oe = ((i) => (i[i.NONE = 0] = "NONE", i[i.WEB_WORKER = 1] = "WEB_WORKER", i[i.NODE_WORKER = 2] = "NODE_WORKER", i[i.BINDINGS = 3] = "BINDINGS", i[i.ASYNC_DUCKDB = 4] = "ASYNC_DUCKDB", i))(oe || {});
+function Te(s2) {
+  switch (s2) {
+    case 0:
+      return "NONE";
+    case 1:
+      return "DEBUG";
+    case 2:
+      return "INFO";
+    case 3:
+      return "WARNING";
+    case 4:
+      return "ERROR";
+    default:
+      return "?";
+  }
+}
 var ie = ((t) => (t[t.SUCCESS = 0] = "SUCCESS", t[t.MAX_ARROW_ERROR = 255] = "MAX_ARROW_ERROR", t[t.DUCKDB_WASM_RETRY = 256] = "DUCKDB_WASM_RETRY", t))(ie || {});
 var E = class {
   constructor(e, r) {
@@ -12415,10 +12431,11 @@ var QuackLogger = class {
     this.debug = debug;
   }
   log(entry) {
-    if (entry.level === "WARNING" || entry.level === "ERROR") {
-      console.warn(`[quackblocks/duckdb] ${entry.level}: ${entry.text}`);
+    const label = Te(entry.level);
+    if (entry.level >= te.WARNING) {
+      console.warn(`[quackblocks/duckdb] ${label}`);
     } else if (this.debug) {
-      console.debug(`[quackblocks/duckdb] ${entry.text}`);
+      console.debug(`[quackblocks/duckdb] ${label}`);
     }
   }
 };
@@ -30554,7 +30571,7 @@ function renderChart(el, data, chartType, markOptions, plotDefaults, defaults12 
       markOpts[key] = value;
     }
   }
-  const computedStyle = getComputedStyle(document.body);
+  const computedStyle = getComputedStyle(activeDocument.body);
   const textColor = computedStyle.getPropertyValue("--text-normal").trim() || "#1a1a1a";
   const { defaultWidth: defaultWidth2, defaultHeight } = defaults12;
   const svg = plot({
@@ -30732,12 +30749,12 @@ var QuackBlocksPlugin = class extends import_obsidian3.Plugin {
     }
   }
   wrapWithCaption(el, caption, className) {
-    const figure = document.createElement("figure");
+    const figure = activeDocument.createElement("figure");
     figure.className = className;
     while (el.firstChild) {
       figure.appendChild(el.firstChild);
     }
-    const figcaption = document.createElement("figcaption");
+    const figcaption = activeDocument.createElement("figcaption");
     figcaption.textContent = caption;
     figure.appendChild(figcaption);
     el.appendChild(figure);
@@ -30748,10 +30765,10 @@ var QuackBlocksPlugin = class extends import_obsidian3.Plugin {
   async saveSettings() {
     await this.saveData(this.settings);
   }
-  async onunload() {
+  onunload() {
     if (this.settings.debugLogging) {
       console.debug("[quackblocks] Unloading...");
     }
-    await this.dbManager.close();
+    void this.dbManager.close();
   }
 };

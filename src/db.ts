@@ -5,11 +5,12 @@ import type { QueryResult, CellValue } from "./types";
 
 class QuackLogger implements duckdb.Logger {
   constructor(private debug: boolean) {}
-  log(entry: duckdb.LogEntry): void {
-    if (entry.level === "WARNING" || entry.level === "ERROR") {
-      console.warn(`[quackblocks/duckdb] ${entry.level}: ${entry.text}`);
+  log(entry: duckdb.LogEntryVariant): void {
+    const label = duckdb.getLogLevelLabel(entry.level);
+    if (entry.level >= duckdb.LogLevel.WARNING) {
+      console.warn(`[quackblocks/duckdb] ${label}`);
     } else if (this.debug) {
-      console.debug(`[quackblocks/duckdb] ${entry.text}`);
+      console.debug(`[quackblocks/duckdb] ${label}`);
     }
   }
 }
@@ -184,12 +185,12 @@ export class DuckDBManager {
       const row: CellValue[] = [];
       for (const col of columns) {
         const colData = result.getChild(col);
-        let val = colData?.get(i);
+        let val: unknown = colData?.get(i);
         // DuckDB Arrow returns BigInt for integer columns — coerce to Number
         if (typeof val === "bigint") {
           val = Number(val);
         }
-        row.push(val);
+        row.push(val as CellValue);
       }
       rows.push(row);
     }

@@ -44,7 +44,7 @@ export function parseCodeBlock(source: string): ParsedDirectives {
     const optionsMatch = firstLine.match(OPTIONS_RE);
     if (optionsMatch) {
       try {
-        chartOptions = JSON.parse(optionsMatch[0]);
+        chartOptions = JSON.parse(optionsMatch[0]) as Record<string, unknown>;
       } catch (err) {
         console.warn("[quackblocks] Failed to parse chart options:", optionsMatch[0], err);
       }

@@ -140,30 +140,30 @@ export default class QuackBlocksPlugin extends Plugin {
   }
 
   private wrapWithCaption(el: HTMLElement, caption: string, className: string): void {
-    const figure = document.createElement("figure");
+    const figure = activeDocument.createElement("figure");
     figure.className = className;
     // Move all existing children into the figure
     while (el.firstChild) {
       figure.appendChild(el.firstChild);
     }
-    const figcaption = document.createElement("figcaption");
+    const figcaption = activeDocument.createElement("figcaption");
     figcaption.textContent = caption;
     figure.appendChild(figcaption);
     el.appendChild(figure);
   }
 
   async loadSettings() {
-    this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+    this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData()) as QuackBlocksSettings;
   }
 
   async saveSettings() {
     await this.saveData(this.settings);
   }
 
-  async onunload() {
+  onunload() {
     if (this.settings.debugLogging) {
       console.debug("[quackblocks] Unloading...");
     }
-    await this.dbManager.close();
+    void this.dbManager.close();
   }
 }
