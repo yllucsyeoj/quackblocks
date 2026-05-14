@@ -1,6 +1,6 @@
 {
   "name": "quackblocks",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Executable SQL code blocks powered by DuckDB WASM",
   "main": "main.js",
   "scripts": {
