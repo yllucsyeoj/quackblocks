@@ -2,6 +2,12 @@
 
 Executable SQL code blocks for Obsidian, powered by DuckDB WASM. Query local Parquet files and render results as inline tables or charts.
 
+## Motivation
+
+Writing data-driven reports traditionally means splitting your work across tools — you write the narrative in your tool of choice, create charts in Python notebooks or dashboard software elsewhere, then export PNGs and embed or link them back into your document. Every data change means re-exporting and re-linking.
+
+With AI-assisted writing, we can now create a single executable document. The content of your report lives alongside the queries and chart directives that visualize what you're writing about — all inline, in one file. No external charts, no linking, no exporting. Write, query, visualize. One document.
+
 ## Features
 
 - **DuckDB WASM** — run analytical SQL directly inside Obsidian, no external server
